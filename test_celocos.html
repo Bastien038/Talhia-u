@@ -14,39 +14,6 @@
       overflow: hidden;
     }
 
-    #audioPrompt {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.9);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      text-align: center;
-    }
-
-    #audioPrompt button {
-      margin: 10px;
-      padding: 12px 24px;
-      font-size: 1em;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    #audioPrompt .yes {
-      background: #00ff99;
-      color: #000;
-    }
-
-    #audioPrompt .no {
-      background: #ff4444;
-      color: #fff;
-    }
-
     .multicolor-title {
       font-size: 2em;
       font-weight: bold;
@@ -57,7 +24,6 @@
     }
 
     #intro {
-      display: none;
       text-align: center;
       margin-top: 100px;
     }
@@ -157,13 +123,7 @@
 </head>
 <body>
 
-<div id="audioPrompt">
-  <div class="multicolor-title">🎵 ¿Quieres activar la música?</div>
-  <button class="yes" onclick="iniciarConMusica()">Sí</button>
-  <button class="no" onclick="iniciarSinMusica()">No</button>
-</div>
-
-<audio id="bgMusic" src="https://files.catbox.moe/1biflx.m4a" loop></audio>
+<audio id="bgMusic" src="https://files.catbox.moe/1biflx.m4a" autoplay loop></audio>
 
 <div id="intro">
   <div class="multicolor-title fade-in">¿Cuánto celos hay en tu relación?</div>
@@ -203,26 +163,13 @@
     { min: 81, max: 100, msg: "🔥 ¡Cuidado! Celos muy altos." }
   ];
 
-  function iniciarConMusica() {
-    document.getElementById('bgMusic').play();
-    iniciarAnimacion();
-  }
-
-  function iniciarSinMusica() {
-    iniciarAnimacion();
-  }
-
-  function iniciarAnimacion() {
-    document.getElementById('audioPrompt').style.display = 'none';
-    document.getElementById('intro').style.display = 'block';
-    setTimeout(() => {
-      document.getElementById('intro').classList.add('fade-in');
-    }, 100);
+  window.onload = () => {
+    document.getElementById('intro').classList.add('fade-in');
     setTimeout(() => {
       document.getElementById('intro').style.display = 'none';
       document.getElementById('contenido').style.display = 'block';
     }, 3000);
-  }
+  };
 
   function startAnalysis() {
     document.getElementById('contenido').style.display = 'none';
@@ -258,3 +205,8 @@
       if (i % 80 === 0) fondo += "\n";
     }
     document.getElementById('hackingBackground').textContent = fondo;
+  }
+</script>
+
+</body>
+</html>
