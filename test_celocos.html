@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Test de Celos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #000;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    #audioPrompt {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      text-align: center;
+    }
+
+    #audioPrompt button {
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #audioPrompt .yes {
+      background: #00ff99;
+      color: #000;
+    }
+
+    #audioPrompt .no {
+      background: #ff4444;
+      color: #fff;
+    }
+
+    .multicolor-title {
+      font-size: 2em;
+      font-weight: bold;
+      background: linear-gradient(90deg, #00eaff, #ff69b4, #ffea00, #00ff99);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
+    }
+
+    #intro {
+      display: none;
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    .fade-in {
+      animation: fadeInZoom 2s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInZoom {
+      0% { opacity: 0; transform: scale(0.9) translateY(20px); filter: blur(4px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+    }
+
+    #contenido {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .input-field {
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      margin: 10px;
+      width: 80%;
+      font-size: 1em;
+    }
+
+    .verificar-btn {
+      background: linear-gradient(90deg, #00eaff, #ff69b4, #ffea00, #00ff99);
+      border: none;
+      padding: 14px 30px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1em;
+      cursor: pointer;
+      color: #181818;
+      box-shadow: 0 0 10px #00eaff88;
+    }
+
+    #proceso {
+      display: none;
+      margin-top: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .process-step {
+      font-family: monospace;
+      font-size: 1.1em;
+      color: #00ff99;
+      animation: flicker 1s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    #hackingBackground {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+      font-family: monospace;
+      font-size: 14px;
+      color: #00ff00;
+      opacity: 0.1;
+      white-space: pre;
+      overflow: hidden;
+    }
+
+    #resultado {
+      display: none;
+      margin-top: 40px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .result-value {
+      font-size: 2.5em;
+      color: #00eaff;
+      font-weight: bold;
+    }
+
+    .result-msg {
+      margin-top: 16px;
+      font-size: 1.2em;
+      background: #232323;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #00eaff33;
+    }
+  </style>
+</head>
+<body>
+
+<div id="audioPrompt">
+  <div class="multicolor-title">🎵 ¿Quieres activar la música?</div>
+  <button class="yes" onclick="iniciarConMusica()">Sí</button>
+  <button class="no" onclick="iniciarSinMusica()">No</button>
+</div>
+
+<audio id="bgMusic" src="https://files.catbox.moe/1biflx.m4a" loop></audio>
+
+<div id="intro">
+  <div class="multicolor-title fade-in">¿Cuánto celos hay en tu relación?</div>
+</div>
+
+<div id="contenido">
+  <input class="input-field" id="nombreUsuario" placeholder="Tu nombre">
+  <input class="input-field" id="nombrePareja" placeholder="Nombre de tu pareja">
+  <button class="verificar-btn" onclick="startAnalysis()">Verificar</button>
+</div>
+
+<div id="proceso">
+  <div class="process-step" id="processStep">Iniciando análisis...</div>
+</div>
+
+<div id="hackingBackground"></div>
+
+<div id="resultado">
+  <div class="result-value" id="resultValue"></div>
+  <div class="result-msg" id="resultMsg"></div>
+</div>
+
+<script>
+  const steps = [
+    "Analizando nombres...",
+    "Detectando señales de celos...",
+    "Evaluando confianza...",
+    "Midiendo reacciones...",
+    "Cruzando datos de pareja...",
+    "¡Test finalizado!"
+  ];
+
+  const mensajes = [
+    { min: 0, max: 30, msg: "💙 Muy pocos celos. ¡Confianza total!" },
+    { min: 31, max: 60, msg: "🧡 Algunos celos normales. Nada grave." },
+    { min: 61, max: 80, msg: "❤️ Nivel de celos elevado. Hablen más." },
+    { min: 81, max: 100, msg: "🔥 ¡Cuidado! Celos muy altos." }
+  ];
+
+  function iniciarConMusica() {
+    document.getElementById('bgMusic').play();
+    iniciarAnimacion();
+  }
+
+  function iniciarSinMusica() {
+    iniciarAnimacion();
+  }
+
+  function iniciarAnimacion() {
+    document.getElementById('audioPrompt').style.display = 'none';
+    document.getElementById('intro').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('intro').classList.add('fade-in');
+    }, 100);
+    setTimeout(() => {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('contenido').style.display = 'block';
+    }, 3000);
+  }
+
+  function startAnalysis() {
+    document.getElementById('contenido').style.display = 'none';
+    document.getElementById('proceso').style.display = 'block';
+    generarLluviaCodigo();
+    let i = 0;
+    const stepText = document.getElementById('processStep');
+    const interval = setInterval(() => {
+      stepText.textContent = steps[i];
+      i++;
+      if (i >= steps.length) {
+        clearInterval(interval);
+        setTimeout(showResult, 1000);
+      }
+    }, 1200);
+  }
+
+  function showResult() {
+    document.getElementById('proceso').style.display = 'none';
+    const resultado = document.getElementById('resultado');
+    resultado.style.display = 'block';
+    const percent = Math.floor(Math.random() * 91) + 10;
+    document.getElementById('resultValue').textContent = percent + "% de celos";
+    const msg = mensajes.find(m => percent >= m.min && percent <= m.max);
+    document.getElementById('resultMsg').textContent = msg ? msg.msg : "";
+  }
+
+  function generarLluviaCodigo() {
+    const caracteres = "01#@$%&*<>/\\|";
+    let fondo = "";
+    for (let i = 0; i < 1000; i++) {
+      fondo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+      if (i % 80 === 0) fondo += "\n";
+    }
+    document.getElementById('hackingBackground').textContent = fondo;
